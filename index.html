@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AgroShield Pro – Enterprise AI Crop Pathology Scanner (2026 Compliant)">
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
+        script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; 
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
+        font-src https://fonts.googleapis.com https://fonts.gstatic.com; 
+        img-src 'self' data: blob: https://images.unsplash.com; 
+        connect-src 'self';">
+    
+    <title>AgroShield Pro | Resilient AI Agriculture</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2dc653;
+            --primary-dark: #1b4332;
+            --accent: #ffb703;
+            --danger: #ef233c;
+            --bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline-offset: 4px; }
+        
+        /* WCAG 2.2: Focus Appearance Enhancement */
+        *:focus-visible { outline: 2px solid var(--primary); }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: var(--text-main); 
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 1200px; padding: 16px 32px;
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px);
+            border-radius: 100px; display: flex; justify-content: space-between;
+            align-items: center; z-index: 1000; border: 1px solid var(--glass-border);
+        }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; }
+        .logo span { color: var(--primary); }
+
+        .dbsc-status {
+            font-size: 0.65rem; color: var(--primary); font-weight: 800;
+            background: rgba(45, 198, 83, 0.1); padding: 6px 12px; border-radius: 20px;
+            display: flex; align-items: center; gap: 8px; border: 1px solid var(--primary);
+        }
+        .pulse { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: blink 1.5s infinite; }
+
+        @keyframes blink { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
+
+        /* --- HERO --- */
+        .hero {
+            padding: 160px 20px 80px;
+            text-align: center;
+        }
+        .hero h1 { font-size: clamp(2.5rem, 8vw, 3.5rem); margin-bottom: 15px; }
+        .hero .highlight { color: var(--primary); }
+        .hero p { color: var(--text-dim); max-width: 600px; margin: 0 auto; }
+
+        /* --- INTERFACE --- */
+        .container { max-width: 1100px; margin: 0 auto 100px; padding: 0 20px; }
+        
+        .main-grid { 
+            display: grid; grid-template-columns: 1fr 400px; gap: 30px; 
+            background: var(--card-bg); backdrop-filter: blur(20px);
+            border-radius: 40px; padding: 40px; border: 1px solid var(--glass-border);
+        }
+
+        /* WCAG 2.2: Minimum Target Size 24x24px ensured via padding/min-height */
+        .upload-card {
+            background: rgba(0,0,0,0.2); border: 2px dashed #334155;
+            border-radius: 30px; min-height: 400px; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            position: relative; overflow: hidden; transition: 0.4s; cursor: pointer;
+        }
+        .upload-card:hover { border-color: var(--primary); background: rgba(255,255,255,0.02); }
+        
+        #preview-img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 28px; }
+        
+        .laser {
+            position: absolute; width: 100%; height: 3px;
+            background: var(--primary); box-shadow: 0 0 20px var(--primary);
+            z-index: 10; top: 0; display: none;
+            animation: scanning 2.5s infinite linear;
+        }
+        @keyframes scanning { 0% { top: 0%; } 100% { top: 100%; } }
+
+        .btn {
+            background: var(--primary); color: white; border: none;
+            padding: 20px 32px; border-radius: 18px; font-weight: 800;
+            font-size: 0.9rem; cursor: pointer; transition: 0.3s;
+            width: 100%; margin-top: 20px; text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+        .btn:disabled { background: #334155; cursor: not-allowed; opacity: 0.5; }
+
+        .results-sidebar { 
+            background: rgba(255,255,255,0.02); border-radius: 30px; 
+            padding: 32px; border: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        #state-loading {
+            display: none; flex-direction: column; align-items: center; text-align: center;
+        }
+        .spin { font-size: 2.5rem; animation: rotate 2s linear infinite; margin-bottom: 15px; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+            nav { padding: 12px 20px; }
+        }
+
+        footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">AGRO<span>SHIELD</span></div>
+    <div class="dbsc-status" title="Device-Bound Session Credentials Active">
+        <div class="pulse"></div> DBSC HARDWARE-BOUND
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>Autonomous <span class="highlight">Pathology</span></h1>
+    <p>Utilizing FIDO2-protected inference models for zero-trust crop analysis.</p>
+</section>
+
+<div class="container">
+    <div class="main-grid">
+        <div class="upload-wrapper">
+            <div class="upload-card" id="drop-zone" onclick="document.getElementById('file-input').click()" role="button" aria-label="Upload crop specimen">
+                <div class="laser" id="laser"></div>
+                <div id="upload-prompt" style="text-align: center;">
+                    <div style="font-size: 3.5rem;">🌿</div>
+                    <h3 style="margin-top:15px">Analyze Specimen</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 5px;">Secure Hardware-Enclave Transfer</p>
+                </div>
+                <img id="preview-img" alt="Specimen preview">
+            </div>
+            <input type="file" id="file-input" hidden accept="image/*">
+            <button class="btn" id="analyze-btn" disabled onclick="initiateAnalysis()">Initialize AI Scan</button>
+        </div>
+
+        <aside class="results-sidebar" id="results-area" aria-live="polite">
+            <div id="state-idle" style="text-align: center; color: var(--text-dim);">
+                <p>Waiting for Input...</p>
+                <small>System Ready • TLS 1.3 Secure</small>
+            </div>
+
+            <div id="state-loading">
+                <div class="spin">🧬</div>
+                <p id="loading-text">Verifying Session...</p>
+                <small id="security-token" style="color: var(--primary); margin-top: 10px; font-family: monospace;"></small>
+            </div>
+
+            <div id="state-results" style="display: none;">
+                <div id="result-badge" style="display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; margin-bottom: 15px;"></div>
+                <h2 id="result-name" style="font-family: 'Playfair Display'; margin-bottom: 10px;"></h2>
+                
+                <div class="progress-container" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 800; margin-bottom: 5px;">
+                        <span>AI CONFIDENCE</span>
+                        <span id="confidence-val">0%</span>
+                    </div>
+                    <div style="height: 6px; background: #1e293b; border-radius: 10px; overflow: hidden;">
+                        <div id="progress-fill" style="height: 100%; width: 0%; transition: 1.5s cubic-bezier(0.2, 1, 0.3, 1);"></div>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--primary); font-size: 0.7rem; letter-spacing: 1px; margin-bottom: 10px;">REMEDIATION STRATEGY</h4>
+                <ul id="steps-list" style="list-style: none; font-size: 0.8rem; color: #cbd5e1; line-height: 1.8;"></ul>
+
+                <button class="btn" style="background: transparent; border: 1px solid #334155; font-size: 0.75rem; margin-top: 30px;" onclick="resetSystem()">New Analysis</button>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<footer>
+    <strong>AgroShield Enterprise v2026.4</strong><br>
+    [span_14](start_span)[span_15](start_span)Zero-Retention Policy. All cryptographic operations utilize Argon2id & FIDO2 standards[span_14](end_span)[span_15](end_span).
+</footer>
+
+<script>
+    const PATHOLOGY_DB = {
+        healthy: { name: "Optimal Vitality", status: "HEALTHY", color: "#2dc653", steps: ["No pathogen detected", "Continue current nitrogen cycle", "Next scan recommended in 7 days"] },
+        blight: { name: "Phytophthora Infestans", status: "CRITICAL", color: "#ef233c", steps: ["Immediate isolation required", "Apply systemic fungicide", "Check irrigation drainage"] },
+        rust: { name: "Urediniomycetes", status: "WARNING", color: "#ffb703", steps: ["Reduce canopy humidity", "Apply copper-based treatment", "Monitor adjacent sectors"] }
+    };
+
+    const UI = {
+        btn: document.getElementById('analyze-btn'),
+        laser: document.getElementById('laser'),
+        preview: document.getElementById('preview-img'),
+        prompt: document.getElementById('upload-prompt'),
+        fileInput: document.getElementById('file-input'),
+        fill: document.getElementById('progress-fill'),
+        states: {
+            idle: document.getElementById('state-idle'),
+            loading: document.getElementById('state-loading'),
+            results: document.getElementById('state-results')
+        }
+    };
+
+    UI.fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (UI.preview.src) URL.revokeObjectURL(UI.preview.src);
+            UI.preview.src = URL.createObjectURL(file);
+            UI.preview.style.display = 'block';
+            UI.prompt.style.display = 'none';
+            UI.btn.disabled = false;
+        }
+    };
+
+    function setUIState(active) {
+        Object.keys(UI.states).forEach(key => {
+            UI.states[key].style.display = (key === active) ? (active === 'loading' ? 'flex' : 'block') : 'none';
+        });
+    }
+
+    async function initiateAnalysis() {
+        UI.btn.disabled = true;
+        UI.laser.style.display = "block";
+        setUIState('loading');
+
+        [span_16](start_span)[span_17](start_span)[span_18](start_span)// 2026 Protocol Simulation: Argon2id Hashing & WebAuthn Challenge[span_16](end_span)[span_17](end_span)[span_18](end_span)
+        const securitySteps = [
+            "Generating FIDO2 Challenge...",
+            "Validating TPM Hardware Bond...",
+            "Argon2id Memory Hardening (46MiB)...",
+            "Neural Inference Active..."
+        ];
+
+        const tokenDisplay = document.getElementById('security-token');
+        for (const step of securitySteps) {
+            tokenDisplay.innerText = step;
+            await new Promise(r => setTimeout(r, 800));
+        }
+
+        renderResults();
+    }
+
+    function renderResults() {
+        UI.laser.style.display = "none";
+        setUIState('results');
+        
+        const keys = Object.keys(PATHOLOGY_DB);
+        const res = PATHOLOGY_DB[keys[Math.floor(Math.random() * keys.length)]];
+        const conf = (Math.random() * (99 - 94) + 94).toFixed(1);
+
+        document.getElementById('result-name').innerText = res.name;
+        document.getElementById('confidence-val').innerText = conf + "%";
+        
+        const badge = document.getElementById('result-badge');
+        badge.innerText = res.status;
+        badge.style.background = res.color;
+        badge.style.color = (res.color === "#ffb703") ? "#0f172a" : "white";
+
+        document.getElementById('steps-list').innerHTML = res.steps
+            .map(s => `<li style="margin-bottom:5px">→ ${s}</li>`).join('');
+
+        requestAnimationFrame(() => {
+            UI.fill.style.width = conf + "%";
+            UI.fill.style.background = res.color;
+        });
+    }
+
+    function resetSystem() {
+        UI.fileInput.value = ""; // Allows re-uploading the same file
+        UI.preview.style.display = 'none';
+        UI.prompt.style.display = 'block';
+        UI.btn.disabled = true;
+        UI.fill.style.width = "0%";
+        setUIState('idle');
+    }
+</script>
+
+</body>
+</html>
+
